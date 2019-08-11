@@ -1,0 +1,41 @@
+table.fs-table .fs-table-action {
+    text-align: center;
+}
+
+table.fs-table .fs-table-action ul {
+    list-style-type: none !important;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+table.fs-table .fs-table-action ul {
+    list-style-type: none !important;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+table.fs-table .fs-table-action ul li {
+    display: inline-block;
+}
+
+.label-book {
+    background-color: #ca195a;
+}
+
+.label-document {
+    background-color: #337ab7;
+}
+
+.label-movie {
+    background-color: #008d4c;
+}
+
+.label-music {
+    background-color:#d33724;
+}
+
+.label-other {
+    background-color:#db8b0b;
+}
