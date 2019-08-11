@@ -13,7 +13,7 @@
     
     <div class="box-body">
         <!-- form start -->
-        <form role="form" id="files-create" action="{{ app('url')->to('files') }}" method="POST" enctype="multipart/form-data">
+        <form role="form" id="files-create" action="{{ app('url')->to('files/create') }}" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="file">File input</label>
                 <input type="file" name="file" id="file">
@@ -43,22 +43,3 @@
     </div>
 </div>
 <!-- /.box -->
-
-@section('form-scripts')
-<script>
-    $(function () {
-        $("#files-create").ajaxForm({
-            data: $(this).serialize(),
-            success: function(message) {
-                fm.addMessage("success", message);
-            },
-            error: function(request) {
-                fm.addMessage(request.status == 500 ? "danger" : "warning", request.responseJSON.error);
-            },
-            complete: function() {
-                window.location = "{{ app('url')->to('files') }}";
-            }
-        });
-    })
-</script>
-@stop

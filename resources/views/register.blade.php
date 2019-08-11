@@ -37,35 +37,42 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
-<body class="hold-transition skin-purple login-page">
-<div class="login-box">
-  <div class="login-logo">
+<body class="hold-transition skin-purple register-page">
+<div class="register-box">
+  <div class="register-logo">
     File<b>Sharer</b>
   </div>
-  <!-- /.login-logo -->
-  <div class="login-box-body">
-    @include('flash-messages')
-    <p class="login-box-msg">Sign in to start your session</p>
 
-    <form role="form" id="auth-login" action="{{ app('url')->to('auth/login') }}" method="POST">
+  <div class="register-box-body">
+    <p class="login-box-msg">Register a new membership</p>
+
+    <form id='auth-register' action="{{ app('url')->to('auth/register') }}" method="post">
+      <div class="form-group has-feedback">
+        <label>Full name</label>
+        <input name='fullname' type="text" class="form-control" placeholder="Full name" required>
+      </div>
       <div class="form-group has-feedback">
         <label>Email</label>
-        <input name='username' class="form-control" placeholder="Email" required>
+        <input name='username' type="email" class="form-control" placeholder="Email" required>
       </div>
       <div class="form-group has-feedback">
         <label>Password</label>
         <input name='password' type="password" class="form-control" placeholder="Password" required>
       </div>
+      <div class="form-group has-feedback">
+        <label>Password confirmation</label>
+        <input name='password_confirmation' type="password" class="form-control" placeholder="Confirm your password" required>
+      </div>
       <div class="form-group">
-        <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
-        <a href="{{ app('url')->to('auth/register') }}" class="btn btn-success btn-block btn-flat">Register a new membership</a>
+        <button type="submit" class="btn btn-primary btn-block btn-flat">Register</button>
       </div>
     </form>
 
+    <a href="{{ app('url')->to('auth/login') }}" class="text-center">I already have a membership</a>
   </div>
-  <!-- /.login-box-body -->
+  <!-- /.form-box -->
 </div>
-<!-- /.login-box -->
+<!-- /.register-box -->
 
 <!-- REQUIRED JS SCRIPTS -->
 
@@ -85,15 +92,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 <script>
   $(function () {
-    $('#auth-login').validate({
-      rules : {
-        username: {
-          required: true
-        },
-        password: {
-          required: true
+    $('#auth-register').validate({
+        rules : {
+            password : {
+                minlength : 5
+            },
+            password_confirmation : {
+                minlength : 5,
+                equalTo : '[name="password"]'
+            }
         }
-      }
     });
   });
 </script>

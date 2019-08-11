@@ -34,8 +34,33 @@ class AuthController extends Controller
         return view('login');
     }
 
-    public function logout() {
+    public function register(Request $request) {
+        if( $request->isMethod('post') ) {
+            $this->validate($request, [
+                "fullname" => "required",
+                "username" => "required",
+                "password" => "required|confirmed|min:5"
+            ]);
+
+            $user = new User;
+            $user->fullname = $request->input('fullname');
+            $user->username = $request->input('username');
+            $user->password = User::encrypt($request->input('password'));
+
+            if( $user->save() ) {
+                return $this->redirectWithSuccessMessage($this->request, 'auth/login', "Welcome! Please log in into the system.");
+            }
+
+            return $this->redirectWithSuccessMessage($this->request, 'auth/login', "It was not possible to register right now. Try again later.");
+        }
+
+        return view('register');
+    }
+
+    public function logout(Request $request) {
         $cookie = new Cookie("token", null, -1);
+        
+        $request->session()->reflash();
 
         return redirect('auth/login')->withCookie($cookie);
     }
@@ -79,9 +104,7 @@ class AuthController extends Controller
         $user = User::where("username", $this->request->input("username"))->first();
 
         if (!$user) {
-            return response()->json([
-                "error" => "Invalid username."
-            ], 400);
+            return $this->redirectWithErrorMessage($this->request, 'auth/login', "Invalid password.");
         }
 
         // Verify the password and generate the token
@@ -89,14 +112,10 @@ class AuthController extends Controller
             $token = $this->jwt($user);
             $exp = time() + 60*60;
 
-            return response()
-                ->json(["token" => $token], 200)
-                ->withCookie(new Cookie("token", $token, $exp));
+            return redirect('files/')->withCookie(new Cookie("token", $token, $exp));
         }
 
         // Bad Request response
-        return response()->json([
-            "error" => "Username or password is wrong."
-        ], 400);
+        return $this->redirectWithErrorMessage($this->request, 'auth/login', "Invalid username or password.");
     }
 }

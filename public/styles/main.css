@@ -39,3 +39,8 @@ table.fs-table .fs-table-action ul li {
 .label-other {
     background-color:#db8b0b;
 }
+
+.error {
+    border-color: #d33724 !important;
+    color: #d33724 !important;
+}

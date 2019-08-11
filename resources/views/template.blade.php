@@ -105,6 +105,8 @@ desired effect
 <script src="{{ app('url')->asset('bower_components/jquery/dist/jquery.min.js') }}"></script>
 <!-- jQuery Forms -->
 <script src="{{ app('url')->asset('bower_components/jquery-form/dist/jquery.form.min.js') }}"></script>
+<!-- jQuery Validate -->
+<script src="{{ app('url')->asset('bower_components/jquery-validation/dist/jquery.validate.min.js') }}"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="{{ app('url')->asset('bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 <!-- DataTables -->
@@ -113,7 +115,6 @@ desired effect
 <!-- AdminLTE App -->
 <script src="{{ app('url')->asset('bower_components/admin-lte/dist/js/adminlte.min.js') }}"></script>
 
-@yield('flash-messages-scripts')
 @yield('table-scripts')
 @yield('form-scripts')
 @yield('footer-scripts')

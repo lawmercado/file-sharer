@@ -13,6 +13,8 @@
 
 $router->post('auth/login', 'AuthController@authenticate');
 $router->get('auth/login', 'AuthController@login');
+$router->post('auth/register', 'AuthController@register');
+$router->get('auth/register', 'AuthController@register');
 
 $router->group(['middleware' => 'jwt.auth'], function() use ($router) {
         $router->get('/', function () use ($router) {
@@ -20,16 +22,17 @@ $router->group(['middleware' => 'jwt.auth'], function() use ($router) {
         });
         
         $router->get('files', 'FilesController@list');
-        $router->post('files', 'FilesController@create');
-        $router->get('files/{id}', 'FilesController@update');
-        $router->post('files/{id}', 'FilesController@update');
+        $router->post('files/create', 'FilesController@create');
+        $router->get('files/{id}/update', 'FilesController@update');
+        $router->post('files/{id}/update', 'FilesController@update');
         $router->get('files/{id}/download', 'FilesController@download');
-        $router->delete('files/{id}', 'FilesController@delete');
+        $router->get('files/{id}/delete', 'FilesController@delete');
         
         $router->get('users', 'UsersController@list');
+        $router->get('users/{id}/profile', 'UsersController@profile');
+        $router->post('users/{id}/profile', 'UsersController@profile');
         $router->post('users', 'UsersController@create');
-        $router->get('users/{id}', 'UsersController@get');
-        $router->delete('users/{id}', 'UsersController@delete');
+        $router->get('users/{id}/delete', 'UsersController@delete');
 
         $router->get('auth/logout', 'AuthController@logout');
     }

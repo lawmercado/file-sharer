@@ -37,4 +37,9 @@ final class User extends Model implements AuthenticatableContract, AuthorizableC
     public function isAdmin() {
         return $this->username === "admin";
     }
+
+    public function files()
+    {
+        return $this->hasMany('App\Models\File');
+    }
 }

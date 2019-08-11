@@ -2,7 +2,7 @@
 <div class="navbar-custom-menu">
     <ul class="nav navbar-nav">
         <li>
-            <a href="#">
+            <a href="{{ app('url')->to('users')}}/{{ Auth::user()->id }}/profile">
                 <span>Logged as <b>{{ Auth::user()->fullname }}</b></span>
             </a>
         </li>

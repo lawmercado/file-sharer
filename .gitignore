@@ -20,7 +20,7 @@ Homestead.json
 # Rocketeer PHP task runner and deployment package. https://github.com/rocketeers/rocketeer
 .rocketeer/
 
-public/bower-components/
+public/bower_components/
 .editorconfig
 .styleci.yml
 

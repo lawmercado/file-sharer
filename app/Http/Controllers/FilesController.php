@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\File;
 use Illuminate\Database\PDOException;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class FilesController extends Controller
 {
@@ -30,78 +31,75 @@ class FilesController extends Controller
                 $file->path = "uploaded/" . $name;
                 $file->mime = $mimetype;
                 $file->category = $request->input('category');
+                $file->user()->associate(Auth::user());
 
                 if( File::where('name', $file->name)->count() == 0 ) {
                     if( $file->save() ) {
                         $request->file('file')->move($destinationPath, $name);
 
-                        return response("The file was successfully uploaded!", 201);
+                        return $this->redirectWithSuccessMessage($request, "files/", "The file was successfully uploaded!");
                     }
                 }
                 else
                 {
-                    return response()->json([
-                        "error" => "The could not be uploaded: The file already exists!"
-                    ], 400);
-                    
+                    return $this->redirectWithErrorMessage($request, "files/", "The could not be uploaded: The file already exists!");
                 }
             }
         }
 
-        return response()->json([
-            "error" => 'Unable to upload the file. Try again later.'
-        ], 500);
+        return $this->redirectWithErrorMessage($request, "files/", "Unable to upload the file. Try again later.");
     }
 
     public function update(Request $request, $id) {
+        $user = $request->user();
+
         if( File::where('id', $id)->count() > 0 ) {
-            $file = File::find($id);
+            $file = File::where('id', $id)->first();
             
-            if( $request->isMethod('post') ) {
-                $oldname = $file->name;
-                $name = $request->input('name');
-                $name = $name != "" ? $name : $oldname;
-
-                $file->name = $name;
-                $file->category = $request->input('category');
-
-                if( $name != $oldname ) {
-                    $newpath = 'uploaded/' . $name;
-                    rename(storage_path($file->path), storage_path($newpath));
-                    $file->path = $newpath;
+            if( $user->isAdmin() || $user->id === $file->user->id )
+            {
+                if( $request->isMethod('post') ) {
+                    $oldname = $file->name;
+                    $name = $request->input('name');
+                    $name = $name != "" ? $name : $oldname;
+    
+                    $file->name = $name;
+                    $file->category = $request->input('category');
+    
+                    if( $name != $oldname ) {
+                        $newpath = 'uploaded/' . $name;
+                        rename(storage_path($file->path), storage_path($newpath));
+                        $file->path = $newpath;
+                    }
+    
+                    if( $file->save() ) {
+                        return $this->redirectWithSuccessMessage($request, "files/", "File sucessfully updated!");
+                    }
+    
+                    return $this->redirectWithErrorMessage($request, "files/", "The file could not be updated!");
                 }
-
-                if( $file->save() ) {
-                    return response("File sucessfully updated!", 200);
-                }
-
-                return response()->json([
-                    "error" => "The file could not be updated!"
-                ], 500);
+                else {
+                    return view('files/update')->with(["f" => $file]);
+                }   
             }
-            else {
-                return view('files/update')->with(["f" => $file]);
-            }
+
+            return $this->redirectWithErrorMessage($request, "files/", "You have no permission to update this file!");
         }
         else {
-            return response()->json([
-                "error" => "The file does not exists!"
-            ], 400);
+            return $this->redirectWithErrorMessage($request, "files/", "The file does not exists!");
         }
     }
 
     public function download($id) {
         if( File::where('id', $id)->count() > 0 ) {
-            $file = File::find($id);
+            $file = File::where('id', $id)->first();
             
             $fullpath = storage_path($file->path);
 
             return response()->download($fullpath);
         }
         else {
-            return response()->json([
-                "error" => "The file does not exists!"
-            ], 400);
+            return $this->redirectWithErrorMessage($request, "files/", "The file does not exists!");
         }
     }
 
@@ -109,29 +107,32 @@ class FilesController extends Controller
         return view('files/list')->with('files', File::all());
     }
 
-    public function delete($id) {
+    public function delete(Request $request, $id) {
+        $user = $request->user();
+
         if( File::where('id', $id)->count() > 0 ) {
-            $file = File::find($id);
+            $file = File::where('id', $id)->first();
             
-            $fullpath = storage_path($file->path);
+            if( $user->isAdmin() || $user->id === $file->user->id )
+            {
+                $fullpath = storage_path($file->path);
 
-            if( file_exists($fullpath) ) {
-                if( unlink($fullpath) ) {
-                    $file->delete();
+                if( file_exists($fullpath) ) {
+                    if( unlink($fullpath) ) {
+                        $file->delete();
 
-                    return response("The file was successfully deleted!", 200);
+                        return $this->redirectWithSuccessMessage($request, "files/", "The file was successfully deleted!");
+                    }
                 }
+            }
+            else {
+                return $this->redirectWithErrorMessage($request, "files/", "You have no permission to delete this file!");
             }
         }
         else {
-            return response()->json([
-                "error" => "The file does not exists!"
-            ], 400);
-            
+            return $this->redirectWithErrorMessage($request, "files/", "The file does not exists!");
         }
         
-        return response()->json([
-            "error" => "The file could not be removed!"
-        ], 500);
+        return $this->redirectWithErrorMessage($request, "files/", "The file could not be removed!");
     }
 }
