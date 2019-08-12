@@ -90,7 +90,7 @@
                     <td>{{ $f->name }}</td>
                     <td><span class='label label-{{ strtolower($f->category) }}'>{{ $f->category }}</span></td>
                     <td>{{ $f->updated_at->format("d/m/Y, H:i:s") }}</td>
-                    <td>{{ $f->user->fullname }}</td>
+                    <td>{{ $f->created_at->format("d/m/Y, H:i:s") }}</td>
                     <td class="fs-table-action">
                         <div class="btn-group">
                             <a href='{{ app("url")->to("files") }}/{{ $f->id }}/download' class="btn text-primary"><i class="fa fa-download"></i></a>
