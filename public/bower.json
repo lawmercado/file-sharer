@@ -1,5 +1,5 @@
 {
-  "name": "FileSharer",
+  "name": "file-sharer",
   "homepage": "https://github.com/lawmercado/file-sharer",
   "authors": [
     "Luís Augusto Weber Mercado <luiswebmercado@gmail.com>"
@@ -18,5 +18,8 @@
     "admin-lte": "adminlte#^2.4.15",
     "jquery-validation": "jquery-validate#^1.19.1",
     "jquery-form": "^4.2.2"
+  },
+  "resolutions": {
+    "jquery": "^2.0"
   }
 }
