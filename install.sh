@@ -1,4 +1,5 @@
 composer install
+mkdir storage
 mkdir storage/uploaded
 mkdir storage/framework
 mkdir storage/framework/sessions
