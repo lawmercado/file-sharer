@@ -1,0 +1,22 @@
+{
+  "name": "FileSharer",
+  "homepage": "https://github.com/lawmercado/file-sharer",
+  "authors": [
+    "Luís Augusto Weber Mercado <luiswebmercado@gmail.com>"
+  ],
+  "description": "A PHP application to share files",
+  "main": "index.php",
+  "license": "GNU GPL v3.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "admin-lte": "adminlte#^2.4.15",
+    "jquery-validation": "jquery-validate#^1.19.1",
+    "jquery-form": "^4.2.2"
+  }
+}
