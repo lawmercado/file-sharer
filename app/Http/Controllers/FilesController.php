@@ -25,24 +25,28 @@ class FilesController extends Controller
 
                 $name = $request->input('name');
                 $name = $name != "" ? $name : $filename;
+                $content = file_get_contents($request->file('file')->getPathName());
+                
+                if( $content ) {
+                    $file = new File;
+                    $file->name = $name;
+                    $file->content = base64_encode($content);
+                    $file->mime = $mimetype;
+                    $file->category = $request->input('category');
+                    $file->user()->associate(Auth::user());
 
-                $file = new File;
-                $file->name = $name;
-                $file->path = "uploaded/" . $name;
-                $file->mime = $mimetype;
-                $file->category = $request->input('category');
-                $file->user()->associate(Auth::user());
-
-                if( File::where('name', $file->name)->count() == 0 ) {
-                    if( $file->save() ) {
-                        $request->file('file')->move($destinationPath, $name);
-
-                        return $this->redirectWithSuccessMessage($request, "files/", "The file was successfully uploaded!");
+                    if( File::where('name', $file->name)->count() == 0 ) {
+                        if( $file->save() ) {
+                            return $this->redirectWithSuccessMessage($request, "files/", "The file was successfully uploaded!");
+                        }
+                    }
+                    else
+                    {
+                        return $this->redirectWithErrorMessage($request, "files/", "The could not be uploaded: The file already exists!");
                     }
                 }
-                else
-                {
-                    return $this->redirectWithErrorMessage($request, "files/", "The could not be uploaded: The file already exists!");
+                else {
+                    return $this->redirectWithErrorMessage($request, "files/", "Error while reading the uploaded file. Try again later.");            
                 }
             }
         }
@@ -66,12 +70,6 @@ class FilesController extends Controller
                     $file->name = $name;
                     $file->category = $request->input('category');
     
-                    if( $name != $oldname ) {
-                        $newpath = 'uploaded/' . $name;
-                        rename(storage_path($file->path), storage_path($newpath));
-                        $file->path = $newpath;
-                    }
-    
                     if( $file->save() ) {
                         return $this->redirectWithSuccessMessage($request, "files/", "File sucessfully updated!");
                     }
@@ -94,9 +92,14 @@ class FilesController extends Controller
         if( File::where('id', $id)->count() > 0 ) {
             $file = File::where('id', $id)->first();
             
-            $fullpath = storage_path($file->path);
-
-            return response()->download($fullpath);
+            $tempFile = tempnam(sys_get_temp_dir(), 'FSF');
+            
+            if( file_put_contents($tempFile, base64_decode($file->content)) ) {
+                return response()->download($tempFile, $file->name);
+            }
+            else {
+                return $this->redirectWithErrorMessage($request, "files/", "Unable to load the file from the database!");
+            }
         }
         else {
             return $this->redirectWithErrorMessage($request, "files/", "The file does not exists!");
@@ -115,14 +118,8 @@ class FilesController extends Controller
             
             if( $user->isAdmin() || $user->id === $file->user->id )
             {
-                $fullpath = storage_path($file->path);
-
-                if( file_exists($fullpath) ) {
-                    if( unlink($fullpath) ) {
-                        $file->delete();
-
-                        return $this->redirectWithSuccessMessage($request, "files/", "The file was successfully deleted!");
-                    }
+                if( $file->delete() ) {
+                    return $this->redirectWithSuccessMessage($request, "files/", "The file was successfully deleted!");
                 }
             }
             else {

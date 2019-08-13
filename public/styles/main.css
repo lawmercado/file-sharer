@@ -44,3 +44,7 @@ table.fs-table .fs-table-action ul li {
     border-color: #d33724 !important;
     color: #d33724 !important;
 }
+
+[data-widget="collapse"] {
+    cursor: pointer;
+}

@@ -1,10 +1,10 @@
 <div class="box box-primary collapsed-box">
-    <div class="box-header">
+    <div class="box-header" data-widget="collapse">
         <h3 class="box-title">Upload a new file</h3>
         <div class="box-tools pull-right">
             <!-- Collapse Button -->
-            <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                <i class="fa fa-minus"></i>
+            <button type="button" class="btn btn-box-tool">
+                <i class="fa fa-plus"></i>
             </button>
         </div>
         <!-- /.box-tools -->
